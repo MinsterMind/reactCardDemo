@@ -97,3 +97,21 @@ label:hover :checked + .card {
   /*-webkit-transform: rotateX(160deg);*/
   box-shadow: 0 20px 20px rgba(255,255,255,.2);
 }
+
+.closePopup{
+  right:3px;
+  top:0px;
+  position: absolute;
+  color: firebrick;
+}
+
+.inputForm {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border: 1px #212121 solid;
+  padding: 5px;
+  /*left: 40%;*/
+  z-index: 40;
+  background: #eeeeee;
+}

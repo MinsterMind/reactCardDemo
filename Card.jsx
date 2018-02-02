@@ -1,5 +1,6 @@
 import React from 'react';
 import {InfiniteScroll} from 'react-simple-infinite-scroll'
+import WordInput from './wordInput.jsx'
 const _ = require('lodash')
 
 
@@ -68,10 +69,18 @@ class Card extends React.Component {
         super()
         this.state = {
             isUpdate: false,
-            word:'',
-            meaning:'',
-            synonyms: ''
+            word: '',//this.props.data.word,
+            meaning:'',//this.props.data.meaning.join(','),
+            synonyms:'',//this.props.data.synonyms.join(',')
+            updateForm: (<WordInput isUpdate="true" isOpen="false"/>)
         }
+    }
+    componentDidMount () {
+        this.setState({
+            word: this.props.data.word,
+            meaning: this.props.data.meaning.join(','),
+            synonyms: this.props.data.synonyms.join(','),
+        })
     }
     deleteWord() {
         fetch(`http://localhost:8080/api/word/${this.props.data.word}`, {
@@ -84,47 +93,27 @@ class Card extends React.Component {
     getUpdateForm() {
         this.setState({isUpdate: true})
     }
-    handleChange(e) {
-        this.setState({[e.target.name]: e.target.value});
-    }
-    handleClick() {
-        var meaning = _.compact(this.state.meaning.split(','))
-        var synonyms = _.compact(this.state.synonyms.split(','))
-        if (_.isEmpty(meaning) || _.isEmpty(synonyms)) {
-            alert('Meaning and Synonyms can not be empty')
-        } else {
-            fetch('http://localhost:8080/api/word', {
-                method: 'put',
-                body: JSON.stringify({
-                    word: this.props.data.word,
-                    meaning: meaning,
-                    synonyms: synonyms
-                })
-            }).then(res => {
-                this.props.components.cardList.rerenderCards()
-            }).catch(err=>{
-                alert(err)
-            })
-        }
-    }
+
+
     cancelUpdate() {
         this.setState({isUpdate: false})
     }
     render() {
+
         if (!this.state.isUpdate) {
             return (
                 <label>
                     <input type="checkbox" className="invisible"/>
                     <div className="card">
-                        <div className="front">{this.props.data.word}
+                        <div className="front">{this.state.word}
                             <span className="updateButtons">
                         <button onClick={this.getUpdateForm.bind(this)}>Update</button>
                         <button onClick={this.deleteWord.bind(this)}>Delete</button>
                     </span>
                         </div>
                         <div className="back">
-                            Meaning: {JSON.stringify(this.props.data.meaning)}<br/>
-                            Synonyms: {JSON.stringify(this.props.data.synonyms)}
+                            Meaning: {JSON.stringify(this.state.meaning)}<br/>
+                            Synonyms: {JSON.stringify(this.state.synonyms)}
                         </div>
                     </div>
 
@@ -132,16 +121,7 @@ class Card extends React.Component {
             )
         } else {
              return(
-                <label>
-                    Word: <br/>
-                    <input type={"text"} name="word" value={this.props.data.word} disabled="true"/><br/>
-                    Meaning: <br/>
-                    <input type={"text"} name="meaning"  onChange={this.handleChange.bind(this)}/><br/>
-                    Synonyms: <br/>
-                    <input type={"text"} name="synonyms"  onChange={this.handleChange.bind(this)}/><br/>
-                    <button onClick={this.handleClick.bind(this)}>Update</button>
-                    <button onClick={this.cancelUpdate.bind(this)}>Cancel</button>
-                </label>
+                 <WordInput isUpdate="true" isOpen="true" cancelUpdate={this.cancelUpdate.bind(this)} data={this.props.data} components={this.props.components}/>
             )
         }
     }
