@@ -16,9 +16,9 @@ class WordInput extends React.Component {
         this.setState({
             isUpdate: this.props.isUpdate,
             isOpen: this.props.isOpen,
-            word: this.props.data && this.props.data.word,
-            meaning: this.props.data && this.props.data.meaning.join(','),
-            synonyms: this.props.data && this.props.data.synonyms.join(',')
+            word: (this.props.data && this.props.data.word) || '',
+            meaning: (this.props.data && this.props.data.meaning.join(',')) || '',
+            synonyms: (this.props.data && this.props.data.synonyms.join(',')) || ''
         })
     }
     handleChange(e) {
