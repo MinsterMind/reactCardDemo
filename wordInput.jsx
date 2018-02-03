@@ -26,9 +26,9 @@ class WordInput extends React.Component {
     }
 
     handleSave() {
-        var meaning = _.compact(this.state.meaning.split(','))
-        var synonyms = _.compact(this.state.synonyms.split(','))
-        if(_.isEmpty(meaning) || _.isEmpty(synonyms) ||_.isEmpty(this.state.word)) {
+        var meaning = _.compact(this.state.meaning.replace(/ /g,'').split(','))
+        var synonyms = _.compact(this.state.synonyms.replace(/ /g,'').split(','))
+        if(_.isEmpty(meaning) || _.isEmpty(synonyms) ||_.isEmpty(this.state.word.trim())) {
             alert('Word, meaning or synonym can not be empty')
         } else {
             // console.log(this.props)
@@ -36,21 +36,28 @@ class WordInput extends React.Component {
                 method: 'post',
                 body: JSON.stringify({
                     word: this.state.word,
-                    meaning: this.state.meaning.split(','),
-                    synonyms: this.state.synonyms.split(',')
+                    meaning: meaning,
+                    synonyms: synonyms
                 })
             }).then(res => {
                 if(!res.ok) {
                     alert('duplicate word')
                 }
-                this.props.components.cardList.rerenderCards()
+                // this.props.components.cardList.rerenderCards()
+                this.props.setParentState({
+                    data: [{
+                        word: this.state.word,
+                        synonyms: synonyms,
+                        meaning: meaning
+                    }]
+                })
                 this.setState({isOpen: false})
             })
         }
     }
     handleUpdate() {
-        var meaning = _.compact(this.state.meaning.split(','))
-        var synonyms = _.compact(this.state.synonyms.split(','))
+        var meaning = _.compact(this.state.meaning.replace(/ /g,'').split(','))
+        var synonyms = _.compact(this.state.synonyms.replace(/ /g,'').split(','))
         if (_.isEmpty(meaning) || _.isEmpty(synonyms)) {
             alert('Meaning and Synonyms can not be empty')
         } else {
@@ -62,7 +69,13 @@ class WordInput extends React.Component {
                     synonyms: synonyms
                 })
             }).then(res => {
-                this.props.components.cardList.rerenderCards()
+                // this.props.components.cardList.rerenderCards()
+                this.props.setParentState({
+                    word: this.state.word,
+                    meaning: meaning,
+                    synonyms: synonyms,
+                    isUpdate: false
+                })
             }).catch(err=>{
                 alert(err)
             })
